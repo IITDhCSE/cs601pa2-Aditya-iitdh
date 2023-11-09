@@ -12,9 +12,9 @@ private:
     int N;
     int PROB;
     Element *e;
-    float *K;
-    float *F;
-    float *u;
+    Eigen::MatrixXf K;
+    Eigen::MatrixXf F;
+    Eigen::MatrixXf u;
     int dim;
 public:
     Rod(int n, int prob)    // constructor to initialize rod properties, number of elements and problem type
@@ -27,8 +27,8 @@ public:
         PROB = prob;
         int dim = (2 * N) - 1;
         e = new Element[N];
-        K = new float[dim * dim];
-        F = new float[dim];
-        u = new float[dim];
+        K(n, n);
+        F(n, 1);
+        u(n, 1);
     }
 };
