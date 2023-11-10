@@ -62,26 +62,26 @@ int main(){
     Eigen::SparseQR<Eigen::SparseMatrix<double>, Eigen::COLAMDOrdering<int>> solver;
     double shiftValue = 1e-3;
     int count = 0;
-    bool decomp = false;
+    bool decomposed = false;
     // iterating till matrix gets decomposed or upto max 10 times
-    while((count<10) && !(decomp)){
+    while((count<10) && !(decomposed)){
         // Solve the shifted linear system (A - shift * I) * x = b using SparseQR
         solver.compute(rod.get_stiffness() - shiftValue * Eigen::SparseMatrix<double>(rod.get_stiffness()));
         if (solver.info() == Eigen::Success) {
-            decomp = true;
+            decomposed = true;
         }
         // shifting the shift value if matrix does not get decomposed
         shiftValue *= 2;
         count++;
     }
 
-    if(!decomp){
+    if(!decomposed){
         std::cout<<"Matrix could not be decomposed!"<<std::endl;
         return 1;
     }
 
     Eigen::VectorXd x = solver.solve(force);
-    
+
     auto end_time = std::chrono::high_resolution_clock::now();
     std::cout << "Computed Displacement vector x:" << std::endl << x << std::endl;
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
