@@ -1,6 +1,9 @@
 /*
-This file contains code to discretize and solve a 1D rod problem assigned in CS 601 assignment 2 using finite element analysis.
+This file contains code to discretize and solve a 1D rod 
+problem assigned in CS 601 assignment 2 
+using finite element analysis.
 */
+
 #include "../inc/rod.h"
 #include <Eigen/Sparse>
 #include <iostream>
@@ -39,9 +42,9 @@ This file contains code to discretize and solve a 1D rod problem assigned in CS 
 #endif
 
 int main(){
+    std::cout<<"\nHello!\n"<<std::endl;
     auto start_time = std::chrono::high_resolution_clock::now();
     // Declaring a rod object
-    std::cout<<"\nHello!\n"<<std::endl;
     Rod rod = Rod(LENGTH, NUMBER_OF_ELEMENTS, YOUNG_MODULUS, A_0, VARIABLE_AREA);
     int number_of_nodes = NUMBER_OF_ELEMENTS + 1;
     // Declaring and allocating memory to force vector
