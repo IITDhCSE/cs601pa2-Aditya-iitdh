@@ -2,9 +2,6 @@
 This file contains required header files for fem.cpp along with macros used in all the other files.
 */
 
-#include "inc/element.h"
-#include "inc/rod.h"
-
 #ifndef DIM
 #define DIM 1
 #endif

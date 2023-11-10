@@ -18,5 +18,5 @@ class Rod {
     Rod();
     const Element * get_elements();
     const Element get_element(int);
-    const Eigen::MatrixXd get_stiffness();
+    Eigen::MatrixXd get_stiffness();
 };

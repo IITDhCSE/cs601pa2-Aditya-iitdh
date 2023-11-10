@@ -16,17 +16,17 @@ $(BIN):
 $(OBJ):
 	mkdir obj
 
-$(BIN)/fem: $(OBJ)/fem.o $(OBJ)/element.o $(OBJ)/rod.o
-	CC CFLAGS $^ -o $@ -I$(INC) $(Params)
+$(BIN)/fem: $(SRC)/fem.cpp $(INC)/discretize.h $(OBJ)/element.o $(OBJ)/rod.o
+	$(CC) $(CFLAGS) $^ -o $@ -I$(INC) $(Params)
 
-$(OBJ)/fem.o: $(SRC)/fem.cpp $(INC)/dicretize.h $(INC)/element.h $(INC)/rod.h
-	CC CFLAGS $< -o $@ -I$(INC) $(Params)
+$(OBJ)/fem.o: $(SRC)/fem.cpp $(INC)/discretize.h $(INC)/element.h $(INC)/rod.h
+	$(CC) $(CFLAGS) $< -o $@ -I$(INC) $(Params)
 
 $(OBJ)/element.o: $(SRC)/element.cpp $(INC)/element.h
-	CC CFLAGS $< -o $@ -I$(INC) $(Params)
+	$(CC) $(CFLAGS) $< -o $@ -I$(INC)
 
-$(OBJ)/rod.o: $(SRC)/rod.cpp $(INC)/dicretize.h $(INC)/element.h $(INC)/rod.h
-	CC CFLAGS $< -o $@ -I$(INC) $(Params)
+$(OBJ)/rod.o: $(SRC)/rod.cpp $(INC)/discretize.h $(INC)/element.h $(INC)/rod.h
+	$(CC) $(CFLAGS) $< -o $@ -I$(INC) $(Params)
 
 clean:
 	$(RM) $(BIN)/*

@@ -1,4 +1,5 @@
 #include "../inc/discretize.h"
+#include "../inc/rod.h"
 
 // Constructor of the class rod
 Rod::Rod(){
@@ -41,6 +42,6 @@ const Element Rod::get_element(int index){
 }
 
 // get_stiffness() : returns gloabal stiffness matrix of the rod
-const Eigen::MatrixXd Rod::get_stiffness(){
+Eigen::MatrixXd Rod::get_stiffness(){
     return this->global_stiffness;
 }
