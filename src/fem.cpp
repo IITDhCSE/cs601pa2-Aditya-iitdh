@@ -74,7 +74,6 @@ int main(){
         shiftValue *= 2;
         count++;
     }
-    auto end_time = std::chrono::high_resolution_clock::now();
 
     if(!decomp){
         std::cout<<"Matrix could not be decomposed!"<<std::endl;
@@ -82,6 +81,8 @@ int main(){
     }
 
     Eigen::VectorXd x = solver.solve(force);
+    
+    auto end_time = std::chrono::high_resolution_clock::now();
     std::cout << "Computed Displacement vector x:" << std::endl << x << std::endl;
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
     std::cout << "Time taken: " << duration.count() << " microseconds" << std::endl;
