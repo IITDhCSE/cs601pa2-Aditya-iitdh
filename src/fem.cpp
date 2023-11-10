@@ -1,5 +1,4 @@
 #include "../inc/discretize.h"
-#include "../inc/rod.h"
 #include "computation.cpp"
 
 /*

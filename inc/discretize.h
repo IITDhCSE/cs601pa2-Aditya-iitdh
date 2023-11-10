@@ -1,3 +1,5 @@
+#include "element.h"
+#include "rod.h"
 /*
 This file contains required header files for fem.cpp along with macros used in all the other files.
 */

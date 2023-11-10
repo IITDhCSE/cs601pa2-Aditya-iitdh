@@ -10,6 +10,8 @@ Functions:
     get_element(int i) : returns ith index element from "elements" array
     get_stiffness() : returns gloabal stiffness matrix of the rod
 */
+#ifndef _Rod_h_
+#define _Rod_h_
 class Rod {
     private:
         Element * elements;
@@ -18,5 +20,6 @@ class Rod {
     Rod();
     const Element * get_elements();
     const Element get_element(int);
-    Eigen::MatrixXd get_stiffness();
+    const Eigen::MatrixXd get_stiffness();
 };
+#endif

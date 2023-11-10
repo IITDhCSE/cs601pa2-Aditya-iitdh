@@ -42,6 +42,6 @@ const Element Rod::get_element(int index){
 }
 
 // get_stiffness() : returns gloabal stiffness matrix of the rod
-Eigen::MatrixXd Rod::get_stiffness(){
+const Eigen::MatrixXd Rod::get_stiffness(){
     return this->global_stiffness;
 }

@@ -13,6 +13,8 @@ Functions :
     get_stiffness() : returns local stiffness matrix of the element
     get_stiffness_index(int i, int j) : returns value at ith row and jth column of the local stiffness matrix of the element
 */
+#ifndef _Element_h_
+#define _Element_h_
 class Element {
     private:
         double xa;
@@ -28,3 +30,4 @@ class Element {
     const Eigen::MatrixXd get_stiffness();
     double get_stiffness_index(int, int);
 };
+#endif

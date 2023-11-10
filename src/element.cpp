@@ -1,4 +1,4 @@
-#include "../inc/element.h"
+#include "../inc/discretize.h"
 
 // Constructor of the class Element
 Element::Element(double XA, double XB, double Area){
