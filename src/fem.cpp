@@ -65,6 +65,7 @@ int main(){
     bool decomp = false;
     // iterating till matrix gets decomposed or upto max 10 times
     while((count<10) && !(decomp)){
+        // Solve the shifted linear system (A - shift * I) * x = b using SparseQR
         solver.compute(rod.get_stiffness() - shiftValue * Eigen::SparseMatrix<double>(rod.get_stiffness()));
         if (solver.info() == Eigen::Success) {
             decomp = true;
