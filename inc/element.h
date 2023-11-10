@@ -1,4 +1,4 @@
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Sparse>
 /*
 This class contains necessary attributes and fuctions to define a 1D rod element in Finite Element Analysis.
 Parameters :
@@ -20,14 +20,13 @@ class Element {
         double xa;
         double xb;
         double area;
-        Eigen::MatrixXd stiffness;
+        Eigen::SparseMatrix<double> stiffness;
     public:
     Element(){};
-    Element(double, double, double);
+    Element(double XA, double XB, double Area, double young_modulus, double element_length);
     double get_area();
-    // double get_xa();
-    // double ** get_stiffness();
-    const Eigen::MatrixXd get_stiffness();
-    double get_stiffness_index(int, int);
+    const Eigen::SparseMatrix<double> get_stiffness();
+    double get_stiffness_index(int index_i, int index_j);
+    ~Element(){};
 };
 #endif

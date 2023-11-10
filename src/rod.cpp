@@ -1,32 +1,41 @@
-#include "../inc/discretize.h"
+#include "../inc/element.h"
 #include "../inc/rod.h"
+#include <Eigen/Sparse>
 
 // Constructor of the class rod
-Rod::Rod(){
+Rod::Rod(double Len, int num_elements, double Young_Modulus, double a_0, bool variable_area){
     // Allocating memory and initializing global stiffness matrix with zeros
-    this->global_stiffness(NUMBER_OF_NODES, NUMBER_OF_NODES);
-    for(int i = 0; i < NUMBER_OF_NODES; i++){
-        for (int j = 0; j < NUMBER_OF_NODES; j++){
-            this->global_stiffness(i, j) = 0;
+    this->length = Len;
+    this->number_of_elements = (int) num_elements;
+    this->young_modulus = Young_Modulus;
+    this->element_length = this->length/this->number_of_elements;
+    this->number_of_nodes = this->number_of_elements + 1;
+    this->a_0 = a_0;
+    this->variable_area = variable_area;
+
+    this->global_stiffness.resize(this->number_of_nodes, this->number_of_nodes);
+    for(int i = 0; i < this->number_of_nodes; i++){
+        for (int j = 0; j < this->number_of_nodes; j++){
+            this->global_stiffness.insert(i, j) = 0;
         }
     }
 
     // Allocating memory and initializing elements array
-    this->elements = new Element[NUMBER_OF_ELEMENTS];
-    for (int i = 0; i < NUMBER_OF_ELEMENTS; i++){
-        double area = A_0;
-        if (PROB == 2){
-            area = A_0 * (1 + ((i * ELEMENT_LENGTH) / LENGTH) + 1 / (2 * NUMBER_OF_ELEMENTS));
+    this->elements = new Element[this->number_of_elements];
+    for (int i = 0; i < this->number_of_elements; i++){
+        double area = this->a_0;
+        if (this->variable_area){
+            area = this->a_0 * (1 + ((i * this->element_length) / this->length) + 1 / (2 * this->number_of_elements));
         }
-        this->elements[i] = Element(i*(ELEMENT_LENGTH), (i+1)*(ELEMENT_LENGTH), area);
+        this->elements[i] = Element(i*(this->element_length), (i+1)*(this->element_length), area, this->young_modulus, this->element_length);
     }
 
     // filling correct values in global stiffness matrix using local stiffness matrix of the containing elements
-    for(int i = 0; i < NUMBER_OF_ELEMENTS; i++){
-        this->global_stiffness(i, i) += this->elements[i].get_stiffness_index(0, 0);
-        this->global_stiffness(i, i + 1) += this->elements[i].get_stiffness_index(0, 1);
-        this->global_stiffness(i + 1, i) += this->elements[i].get_stiffness_index(1, 0);
-        this->global_stiffness(i + 1, i + 1) += this->elements[i].get_stiffness_index(1, 1);
+    for(int i = 0; i < this->number_of_elements; i++){
+        this->global_stiffness.coeffRef(i, i) += this->elements[i].get_stiffness_index(0, 0);
+        this->global_stiffness.coeffRef(i, i + 1) += this->elements[i].get_stiffness_index(0, 1);
+        this->global_stiffness.coeffRef(i + 1, i) += this->elements[i].get_stiffness_index(1, 0);
+        this->global_stiffness.coeffRef(i + 1, i + 1) += this->elements[i].get_stiffness_index(1, 1);
     }
 
 }
@@ -42,6 +51,11 @@ const Element Rod::get_element(int index){
 }
 
 // get_stiffness() : returns gloabal stiffness matrix of the rod
-const Eigen::MatrixXd Rod::get_stiffness(){
+const Eigen::SparseMatrix<double> Rod::get_stiffness(){
     return this->global_stiffness;
+}
+
+// destructor of Rod class: deallocated memory allocated to elements
+Rod::~Rod() {
+    delete[] this->elements;
 }
