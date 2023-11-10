@@ -1,0 +1,355 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage[export]{adjustbox}
+\usepackage{parskip,xcolor}
+\usepackage{graphicx,graphics}
+\usepackage[top=5em, bottom=5em]{geometry}
+\usepackage{float}
+
+\title{CS601 \\ Software Development for Scientific Computing \\ Assignment 2}
+\author{Cebajel Tanan - 210010055 \\ Balaji NK - 210010008 \\ Aditya Sujeet Zanjurne - 210010001}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+Approx Reading time: 5min
+\section{Contribution break-up}
+\subsection*{Cebajel Tanan}
+\begin{itemize}
+    \item Makefile
+    \item Problem 1(b), 2 and 3
+\end{itemize}
+
+\subsection*{Balaji NK}
+\begin{itemize}
+    \item Readme file
+    \item Problem 1(a)
+    \item Report: tables
+\end{itemize}
+
+\subsection*{Aditya Sujeet Zanjurne}
+\begin{itemize}
+    \item Problem 1(c)
+    \item Report: images, described observations
+\end{itemize}
+
+\newpage
+\section{Finite Element Method}
+FEM is a method of solving PDEs that overcomes the shortcomings of FDM to solve practical
+engineering problems in mechanical, electrical engineering, physics, aerospace engineering,
+among others.\\
+Example: 1D structural problem\\
+\begin{equation}
+EA \frac{d^2u}{dx^2} + F = 0
+\end{equation}
+
+The equation represents the equilibrium equation for a material subjected to forces. It aims to find stresses and strains at various points along a fixed rod experiencing force at one end.
+
+We have: Stress ($\sigma$) / Strain ($\epsilon$) = E (Young’s modulus)\\
+\[
+Strain (\epsilon) = \textit{change in length }/ \textit{original length} = \frac{\partial u}{dx}    
+\]
+Substituting: E $\frac{\partial u}{dx} = \sigma$ 
+
+At $x$ = 0, $u$ = 0 
+\begin{equation}
+At \quad x = L, u = EA \partial u/\partial x  \quad \textit{( the value  is specified )}   
+\end{equation}
+Suppose, $\tilde{u}$ is an approximate solution. Being approximate in nature, $\tilde{u}$ will not
+satisfy the equation (1) at all points x i.e
+\begin{equation}
+EA \frac{d^2 \tilde{u}}{dx^2} + F = R
+\end{equation}
+
+$\tilde{u}$ has an associated error or Residual R.
+By weighted residual method:
+\[
+\int \omega R = 0
+\]
+
+\[
+\implies \int \omega \left( EA \frac{d^2 \tilde{u}}{dx^2} + F \right) = 0
+\]
+
+$=\int_{\Omega} \omega E A \frac{d^{2} \tilde{u}}{d x^{2}} d \Omega+\int_{\Omega} \omega F d \Omega=0$, where $\int_{\Omega} \quad$ denotes integral over the domain $\Omega$. For the $1 \mathrm{D}$ rod problem, this is integral over 0 to $L$.
+
+$$
+\frac{d}{d x}\left[\omega \frac{d \tilde{u}}{d x}\right]=\frac{d \omega}{d x} \frac{d \tilde{u}}{d x}+\omega \frac{d^{2} \tilde{u}}{d x^{2}}
+$$
+
+$$
+\implies \int_{\Omega} \frac{d}{d x}\left(\omega E A \frac{d \tilde{u}}{d x}\right) d \Omega-\int_{\Omega} E A \frac{d \omega}{d x} \frac{d \tilde{u}}{d x} d \Omega+\int \omega F d \Omega=0
+$$
+
+\begin{equation}
+   \implies \left[\omega E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} \omega F d \Omega=\int_{\Omega} E A \frac{d \omega}{d x} \frac{d \tilde{u}}{d x} d \Omega
+\end{equation}
+
+In the given equation, the term $\left[\omega E A \frac{d \widetilde{u}}{d x}\right]_{0}^{L}$ is termed the boundary term, where the coefficient of the weight function signifies the Neumann BC. This coefficient is referred to as the secondary variable. The primary variable, denoted as $\omega$, stands for the Dirichlet BC, representing the unknown function u at the boundaries. When u=0 (from $\omega$ = 0 at x = 0), setting $\omega$=0 and applying this in the equation yields the result.
+
+$$
+\left[\omega E A \frac{d \tilde{u}}{d x}\right]_{L}+\int_{0}^{L} \omega F d x=\int_{0}^{L} E A \frac{d \omega}{d x} \frac{d \tilde{u}}{d x} d x
+$$
+
+\newpage
+\section{ Finite Element Method contd.}
+
+The steps in the FEM approach are:
+
+\begin{enumerate}
+  \item construct the weak-form of the PDE
+
+  \item assume the form of approximate solution for a typical element. More on element in the next paragraph.
+
+  \item Derive finite element equations by substituting approximated solution in the weak form
+
+\end{enumerate}
+
+The approximate solution (in step 2 above) considered must satisfy the following properties:
+
+\begin{itemize}
+  \item Continuous and differentiable
+
+  \item Complete (e.g. $f(x)=c 1+c 2 x$ is a complete linear function.\\ $g(x)=c 1 x+c 2 x^{2}$ is not a complete quadratic function.)
+
+\end{itemize}
+
+Consider a 2-node rod element:
+$x_{A}$ and $x_{B}$ are the spatial coordinates. The element is of length $h^{e}=x_{B}-x_{A}$
+The approximate solution at points $x_A$ and $x_B$ are given by the equations:
+
+$$
+\begin{aligned}
+& u_{1}^{e}=c 1+c 2 x_{A} \\
+& u_{2}^{e}=c 1+c 2 x_{B}
+\end{aligned}
+$$
+
+$$
+\left[\begin{array}{ll}
+1 & x_{A} \\
+1 & x_{B}
+\end{array}\right]\left[\begin{array}{l}
+c 1 \\
+c 2
+\end{array}\right]=\left[\begin{array}{l}
+u_{1}^{e} \\
+u_{2}^{e}
+\end{array}\right]
+$$
+
+$$
+\begin{gathered}
+c 1=u_{1}^{e}-\frac{\left(u_{2}^{e}-u_{1}^{e}\right)}{x_{B}-x_{A}} x_{A} \\
+c 2=\frac{\left(u_{2}^{e}-u_{1}^{e}\right)}{x_{B}-x_{A}}
+\end{gathered}
+$$
+
+From $c 1+c 2 x$ :
+
+$$
+c 1+c 2 x=\frac{u_{1}^{e}\left(x_{B}-x\right)}{\left(x_{B}-x_{A}\right)}+\frac{u_{2}^{e}\left(x-x_{A}\right)}{\left(x_{B}-x_{A}\right)}
+$$
+
+Note that these are functions of $x$.
+
+At point $x_{B}$, the value of function $N_{1}=0$ and point $x_{A}$ the value of function $N_{1}=1$
+
+At point $x_{B}$, the value of function $N_{2}=1$ and point $x_{A}$ the value of function $N_{2}=0$
+
+We denote $\tilde{u}$ as:
+
+$$
+\tilde{u}=N_{1} u_{1}+N_{2} u_{2}
+$$
+
+or written in terms of longitudinal displacement:
+
+$$
+\tilde{u}(x)=N_{1}(x) u_{1}+N_{2}(x) u_{2}
+$$
+
+$u_{1}$ and $u_{2}$ are displacements at the Nodes 1 and 2 resp. These are called nodal / elemental displacements.
+
+The weak-form equation for the rod:
+
+$$
+\left[\omega E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} \omega F d \Omega=\int_{\Omega} E A \frac{d \omega}{d x} \frac{d \tilde{u}}{d x} d \Omega
+$$
+Substituting for $\omega$ with $N_1$ and $N_2$.
+$$
+\implies \begin{aligned}
+& {\left[N_{1} E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{1} F d \Omega=\int_{\Omega} E A \frac{d N_{1}}{d x} \frac{d}{d x}\left(N_{1} u_{1}+N_{2} u_{2}\right) d \Omega} \\
+& {\left[N_{2} E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{2} F d \Omega=\int_{\Omega} E A \frac{d N_{2}}{d x} \frac{d}{d x}\left(N_{1} u_{1}+N_{2} u_{2}\right) d \Omega}
+\end{aligned}
+$$
+
+Considering the first equation, rewriting, and expanding (note the color coding is for readability only):
+
+$$
+\begin{aligned}
+& {\left[N_{1} E A \frac{d \widetilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{1} F d \Omega=\int_{\Omega} E A \frac{d N_{1}}{d x} \frac{d}{d x}\left(N_{1} u_{1}+N_{2} u_{2}\right) d \Omega} \\
+& \Rightarrow \int_{\Omega} E A \frac{d N_{1}}{d x} \frac{d}{d x}\left(N_{1} u_{1}+N_{2} u_{2}\right) d \Omega=\left[N_{1} E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{1} F d \Omega \text { (RHS=LHS) } \\
+& \Rightarrow \int_{\Omega} \operatorname{EA} \frac{d N_{1}}{d x} \frac{d N_{1}}{d x} \mathrm{u}_{1} d \Omega+\int_{\Omega} \operatorname{EA} \frac{d N_{1}}{d x} \frac{d N_{2}}{d x} \mathrm{u}_{2} d \Omega=\left[N_{1} E A \frac{d \tilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{1} F d \Omega
+\end{aligned}
+$$
+
+Similarly considering the second equation, rewriting, and expanding:
+
+$$
+\int_{\Omega} \mathrm{EA} \frac{d N_{2}}{d x} \frac{d N_{1}}{d x} \mathrm{u}_{1} d \Omega+\int_{\Omega} \mathrm{EA} \frac{d N_{2}}{d x} \frac{d N_{2}}{d x} \mathrm{u}_{2} d \Omega=\left[N_{2} E A \frac{d \widetilde{u}}{d x}\right]_{0}^{L}+\int_{\Omega} N_{2} F d \Omega
+$$
+
+Using shorter notation on the LHS for the two equations expanded:
+
+\begin{equation}
+\begin{aligned}
+ K_{11} u_{1}+K_{12} u_{2}=\left[N_{1} E A \frac{d \widetilde{u}}{d x}\right]_{0}^{L}+\int_{0}^{L} N_{1} F d x 
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+& K_{21} u_{1}+K_{22} u_{2}=\left[N_{2} E A \frac{d \widetilde{u}}{d x}\right]_{0}^{L}+\int_{0}^{L} N_{2} F d x
+\end{aligned}
+\end{equation}
+
+
+
+Where, $K_{i j}=\int_{0}^{L} E A \frac{d N_{i}}{d x} \frac{d N_{j}}{d x} d x$ and $\Omega$ ranges from 0 to $L$ ( $\mathrm{d} \Omega$ becomes $\mathrm{dx}$ because of the domain is $1 \mathrm{D})$.
+
+The Equations 5 and 6 can be expressed in $A x=B$ form ( $A$ is matrix, $x$ is vector, and $B$ is a vector) as:
+
+\[
+\left [
+    \begin{matrix}
+       K_{11} & K_{12} \\
+       K_{21} & K_{22} \\
+    \end{matrix}
+    \right ]  \left [
+    \begin{matrix}
+       u_1\\
+       u_2\\
+    \end{matrix}
+    \right ] =\left [
+    \begin{matrix}
+       \bigl[N_{1} E A \frac{d \widetilde{u}}{d x}\bigr]_{0}^{L}+\int_{0}^{L} N_{1} F d x \\
+       \\
+       \bigl[N_{2} E A \frac{d \widetilde{u}}{d x}\bigr]_{0}^{L}+\int_{0}^{L} N_{2} F d x
+    \end{matrix}
+    \right ] 
+\]
+
+\newpage
+\section{Finite Element Method contd. (Numerical
+Integration)}
+
+The basic requirement for the Gauss-Quadrature rules to be applied is that the integral limits range
+from -1 to 1
+
+\[
+K_{ij} = \int_{x_a}^{x_b} EA \frac{dN_i}{dx} \frac{dN_j}{dX} dx = \int_{x_b}^{x_a} F(x)dx \implies K_{ij} = \int_{-1}^{1} \tilde{F} (\xi) d \xi
+\]
+
+$\int_{-1}^{1} \tilde{F}(\xi) d \xi$ is numerically computed as summation:
+
+$\int_{-1}^{1} \tilde{F}(\xi) d \xi=\sum_{i=1}^{N} w_{i} \tilde{F}\left(\xi_{i}\right)$, \\
+where $w_{i}$ is the quadrature weight of the $\mathrm{i}^{\text {th }}$ quadrature point and \\ $\xi_{i}$ is the corresponding location.
+
+In two-point quadrature $w_{1} \tilde{F}\left(\xi_{1}\right)+w_{2} \tilde{F}\left(\xi_{2}\right), w_{1}=w_{2}=1, \xi_{1}=-\frac{1}{\sqrt{3}}, \xi_{2}=\frac{1}{\sqrt{3}}$.
+
+In one-point quadrature, $w_{1} \tilde{F}\left(\xi_{1}\right), w_{1}=2, \xi_{1}=0$
+
+Nodal displacements using linear functions $N_{1}$ and $N_{2}$ :
+
+$$
+\tilde{u}(x)=N_{1}(x) u_{1}+N_{2}(x) u_{2}
+$$
+
+where $u_{1}$ and $u_{2}$ are nodal displacements at nodes 1 and 2 resp.
+
+$$
+\implies \tilde{u}(\xi)=N_{1}(\xi) u_{1}+N_{2}(\xi) u_{2}
+$$
+
+To begin the mapping of the domain from physical $(x)$ to natural ( $\xi$ ), let us begin by writing $\mathrm{x}$ as: $x=a+b \xi$
+
+We know $\xi=-1$, when $x=x_{a}$ AND $\xi=1$ when $x=x_{b}$. So, using these two conditions, we get two equations that we can solve to get a and $\mathrm{b}$. Substituting the values of $\mathrm{a}$ and $\mathrm{b}$ in $x=a+b \xi$, we get:
+
+$x=x_{a} \frac{1-\xi}{2}+x_{b} \frac{1+\xi}{2}$. So, we can write $x$ as:
+
+$x=x_{a} N_{1}(\xi)+x_{b} N_{2}(\xi)$, where $N_{1}=\frac{1-\xi}{2}$ and $N_{2}=\frac{1+\xi}{2}$ can be seen as linear functions of $\xi$.
+
+$$
+\tilde{u}(\xi)=N_{1}(\xi) u_{1}+N_{2}(\xi) u_{2}
+$$
+
+Now,
+
+$\frac{d N_{i}}{d x}$ needs to be converted in terms of $\frac{d N_{i}}{d \xi}$ and $\frac{d \xi}{d x}$ (chain rule).
+
+We know that: $x=x_{a} N_{1}(\xi)+x_{b} N_{2}(\xi)$. OR $x=x_{1} N_{1}+x_{2} N_{2}\left(x_{1}=x_{a}\right.$ and $x_{2}=x_{b}$ are node 1 and node 2 coordinates resp.) OR $x=\sum_{k=1}^{2} x_{k} N_{k}$
+
+$\frac{d x}{d \xi}=x_{1} \frac{d}{d \xi} N_{1}+x_{2} \frac{d}{d \xi} N_{2}=\sum_{k=1}^{2} x_{k} \frac{d}{d \xi} N_{k}$
+
+$\frac{d x}{d \xi}=J$, where $J$ is called the Jacobian matrix.
+
+$$
+\begin{gathered}
+K_{i j}=\int_{x_{a}}^{x_{b}} E A \frac{d N_{i}}{d x} \frac{d N_{j}}{d x} d x=\int_{-1}^{1} E A \frac{d N_{i}}{d \xi} \frac{d \xi}{d x} \frac{d N_{j}}{d \xi} \frac{d \xi}{d x}\left(\sum_{k=1}^{2} x_{k} \frac{d}{d \xi} N_{k}\right) d \xi= \\
+\int_{-1}^{1} E A \frac{d N_{i}}{d \xi} \frac{d N_{j}}{d \xi}[J]^{-1}[J]^{-1}[J] d \xi= \\
+\int_{-1}^{1} E A \frac{d N_{i}}{d \xi} \frac{d N_{j}}{d \xi}[J]^{-1} d \xi
+\end{gathered}
+$$
+
+The integral function $E A \frac{d N_{i}}{d \xi} \frac{d N_{j}}{d \xi}[J]^{-1}$ above can be represented as $\tilde{F}(\xi)$
+
+Using 1-point quadrature $\left(w_{1}=2, \xi_{1}=0\right)$
+
+$\frac{d x}{d \xi}=x_{1} \frac{d}{d \xi} N_{1}+x_{2} \frac{d}{d \xi} N_{2}=x_{1} \frac{d}{d \xi}\left(\frac{1-\xi}{2}\right)+x_{2} \frac{d}{d \xi}\left(\frac{1+\xi}{2}\right)=\frac{-x_{1}}{2}+\frac{x_{2}}{2}=\frac{x_{2}-x_{1}}{2}=\frac{L}{2}$
+
+$$
+\begin{gathered}
+K_{11}=\int_{-1}^{1} E A \frac{d N_{1}}{d \xi} \frac{d N_{1}}{d \xi}[J]^{-1} d \xi=\frac{E A}{L} \\
+K_{12}=\int_{-1}^{1} E A \frac{d N_{1}}{d \xi} \frac{d N_{2}}{d \xi}[J]^{-1} d \xi=-\frac{E A}{L} \\
+K_{21}=\int_{-1}^{1} E A \frac{d N_{2}}{d \xi} \frac{d N_{1}}{d \xi}[J]^{-1} d \xi=-\frac{E A}{L} \\
+K_{22}=\int_{-1}^{1} E A \frac{d N_{2}}{d \xi} \frac{d N_{2}}{d \xi}[J]^{-1} d \xi=\frac{E A}{L}
+\end{gathered}
+$$
+
+The elemental stiffness matrix is (when $\mathrm{E}$ and $\mathrm{A}$ are constants):
+
+$$
+\frac{E A}{L}\left[\begin{array}{cc}
+1 & -1 \\
+-1 & 1
+\end{array}\right]
+$$
+
+Now consider the rod with two elements. There are 3 nodes as shown below for the two elements:
+
+For the 3 nodes, there are 3 degrees of freedom (i.e., 3 displacement values, each for a node). Consequently, with 3 displacement values denoted as $\mathrm{u}^{\mathrm{s}}$, the x vector in the $\mathrm{Ax}=\mathrm{B}$ equation would consist of 3 components. Therefore, the combined global stiffness matrix from the elemental matrices of elements 1 and 2 would be $3 \times 3$:
+
+\begin{equation*}
+\left[
+\begin{matrix}
+\frac{A_1E_1}{L_1} & -\frac{A_1 E_1}{L_1} & 0\\
+-\frac{A_1 E_1}{L_1} & {\frac{A_1 E_1}{L_1}} + {\frac{A_2 E_2}{L_2}} & \frac{A_2 E_2}{L_2}\\
+0 & -\frac{A_2 E_2}{L_2} & \frac{A_2 E_2}{L_2}\\
+\end{matrix}
+\right]
+\end{equation*}
+
+
+$\frac{A_1 E_1}{L_1}$ and $\frac{A_2 E_2}{L_2}$ are derived from the elemental matrices of elements 1 and 2, respectively. They represent the area, Young's modulus, and length of each element, contributing to the overall stiffness matrix.
+
+\end{document}
