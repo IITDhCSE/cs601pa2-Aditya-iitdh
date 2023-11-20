@@ -1,0 +1,10 @@
+Commit ID tagged for submission: f7f0de8cb8b5fe7ff4ef1570f4a67b0eb935f329
+Submission graded at: 2023-11-20 06:28:52
+
+penalty:0.75
+grade:6.75
+- the way you have defined xa and xb in class Element implies that this is hardcoded for 1D problem. (-0.25)
+- Comments are good. Good application of OO design. 
+- Force at X_L is zero. You have it as -5000. (-0.25)
+- Makefile target team is missing (-0.25)
+0.75
